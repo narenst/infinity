@@ -1,11 +1,16 @@
 import click
 
-
-@click.command()
-@click.option('-c', '--config', default='./infinty.yml', help="Path to the infinity config file")
-def cli(config):
-    print(f"Hello world {config}")
+from infinity.command.list import list
+from infinity.command.start import start
+from infinity.command.stop import stop
 
 
-if __name__ == '__main__':
-    cli()
+@click.group()
+def cli():
+    pass
+
+
+# Mount the individual commands here
+cli.add_command(list)
+cli.add_command(start)
+cli.add_command(stop)

@@ -10,6 +10,7 @@ setup(
         "pytz",
         "tabulate",
         "PyYAML",
+        "boto3>=1.0.0"
     ],
     setup_requires=[
         "flake8",

@@ -1,0 +1,2 @@
+class AWSInstanceNotFound(Exception):
+    pass
