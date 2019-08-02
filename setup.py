@@ -1,10 +1,9 @@
 from setuptools import setup, find_packages
 
-__version__ = '0.1'
-
 setup(
     name="infinity",
-    version=__version__,
+    version="0.1",
+    packages=find_packages(),
     install_requires=[
         "click",
         "requests",
@@ -13,7 +12,7 @@ setup(
         "PyYAML",
     ],
     setup_requires=[
-        "pylint",
+        "flake8",
     ],
     dependency_links=[],
     entry_points={
