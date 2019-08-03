@@ -19,8 +19,6 @@ def list():
                              instance.tags[0]['Value'],
                              instance.instance_type,
                              instance.state['Name'],
-                            #  instance.cpu_options['CoreCount'],
-                            #  instance.image_id,
                              instance.spot_instance_request_id])
 
     headers = ["ID", "NAME", "MACHINE TYPE", "STATUS", "SPOT REQ ID"]
