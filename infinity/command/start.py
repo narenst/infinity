@@ -1,7 +1,7 @@
 import click
 
 from infinity.aws.auth import get_session
-from infinity.aws.instance import get_specific_instance
+from infinity.aws.instance import get_specific_instance, get_snapshots_by_volume_id
 
 
 @click.command()
@@ -11,20 +11,20 @@ def start(id):
     Start the cloud machine with the id
     """
     session = get_session()
-    instance = get_specific_instance(session=session, id=id)
+    ec2_resource = session.resource('ec2')
 
-    instance_state = instance.state['Name']
-    if instance_state != 'stopped':
-        raise Exception(f"Instance is not in stopped state: {instance_state}")
+    volume = ec2_resource.Volume(id=id)
 
-    print("Starting instance now...")
-    instance.start()
+    if volume.state == 'in-use':
+        ec2_instance_id = volume.attachments[0]['InstanceId']
+        ec2_instance = ec2_resource.Instance(id=ec2_instance_id)
+        raise Exception(f"Active instance with this volume: {ec2_instance.state}")
 
-    print("Waiting for the instance to be up and running...")
-    instance.wait_until_running()
+    if volume.state != 'available':
+        raise Exception(f"Disk is in a bad state: {volume.state}")
 
-    instance.reload()
-    if instance.state['Name'] == 'running':
-        print("Machine is started")
-    else:
-        raise Exception(f"Error starting the instance: {id}")
+    # Check if latest snapshot exists for this volume
+    snapshots = get_snapshots_by_volume_id(session, volume.id)
+
+    if not snapshots:
+        print("Creating a snapshot first")
