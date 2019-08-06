@@ -15,99 +15,63 @@ def create():
     client = session.client('ec2')
 
     # Spot instance request parameters
-    response = client.request_spot_instances(
-        InstanceCount=1,
-        LaunchSpecification={
-            'ImageId': 'ami-0ddba16a97b1dcda5',
-            'InstanceType': 'p2.xlarge',
-            'KeyName': 'naren-aws',
-            'Placement': {
-                'AvailabilityZone': 'us-west-2c'
-            },
-            'BlockDeviceMappings': [
-                {
-                    'DeviceName': '/dev/sda1',
-                    'Ebs': {
-                        'DeleteOnTermination': False,
-                    },
-                }
-            ],
-            'EbsOptimized': True,
-            'SecurityGroupIds': [
-                'sg-0dae15838d442bcbd',
-            ],
-        },
-        Type='one-time'
-    )
-
-    spot_request_id = response['SpotInstanceRequests'][0]['SpotInstanceRequestId']
-    # Wait until the new instance ID is propagated
-    sleep(1)
-
-    # Tag the request next
-    client.create_tags(
-        Resources=[spot_request_id],
-        Tags=[
+    machine_name_suffix = ''.join(random.choice(string.ascii_lowercase) for x in range(10))
+    response = client.run_instances(
+        ImageId='ami-0ddba16a97b1dcda5',
+        InstanceType='p2.xlarge',
+        KeyName='naren-aws',
+        BlockDeviceMappings=[
             {
-                'Key': 'type',
-                'Value': 'infinity'
+                'DeviceName': '/dev/sda1',
+                'Ebs': {
+                    'DeleteOnTermination': False,
+                },
+            }
+        ],
+        EbsOptimized=True,
+        SecurityGroupIds=[
+            'sg-0dae15838d442bcbd',
+        ],
+        MaxCount=1,
+        MinCount=1,
+        TagSpecifications=[
+            {
+                "ResourceType": "instance",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": f"infinity-{machine_name_suffix}"
+                    },
+                    {
+                        "Key": "type",
+                        "Value": "infinity"
+                    }
+                ]
             }
         ]
     )
 
-    # Wait for the spot request to be fulfilled
-    spot_request_details = None
-    spot_request_state = 'open'
+    instance_id = response['Instances'][0]['InstanceId']
 
-    for _ in range(60):
-        spot_instance_requests = client.describe_spot_instance_requests(
-            SpotInstanceRequestIds=[
-                spot_request_id,
-            ]
-        )
-        spot_request_details = spot_instance_requests['SpotInstanceRequests'][0]
-        spot_request_state = spot_request_details['State']
+    # Wait until the new instance ID is propagated
+    sleep(1)
 
-        print(f"Spot id: {spot_request_id}, Status: {spot_request_state}")
-        if spot_request_state != 'open':
-            break
-
-        # Wait for a second before trying again
-        sleep(1)
-    else:
-        # Cancel the spot request
-        client.cancel_spot_instance_requests(
-            SpotInstanceRequestIds=[
-                spot_request_id,
-            ]
-        )
-        print(f"Cancelled the spot instance request id: {spot_request_id}. "
-              "Please try again after sometime, or try with a different regions, AZ, or machine spec")
-        exit(1)
-
-    if spot_request_state != 'active':
-        print(f"Spot Instance was not allocated: {spot_request_state}, Status: {spot_request_details['Status']}")
-        exit(1)
-
-    spot_instance_id = spot_request_details['InstanceId']
-
-    # Get instance volume id
+    # Get the instance volume id
     ec2_resource = session.resource('ec2')
 
-    ec2_instance = ec2_resource.Instance(spot_instance_id)
+    ec2_instance = ec2_resource.Instance(instance_id)
     root_volume_id = ec2_instance.block_device_mappings[0]['Ebs']['VolumeId']
 
-    # Tag the instance and disk volume
-    machine_name_suffix = ''.join(random.choice(string.lowercase) for x in range(10))
+    # Tag the disk volume
     client.create_tags(
-        Resources=[spot_instance_id, root_volume_id],
+        Resources=[root_volume_id],
         Tags=[
             {
                 'Key': 'type',
                 'Value': 'infinity'
             },
             {
-                'Name': 'Name',
+                'Key': 'Name',
                 'Value': f'infinity-{machine_name_suffix}'
             }
         ]
