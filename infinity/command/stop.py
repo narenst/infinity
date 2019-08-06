@@ -2,10 +2,11 @@ import click
 
 from infinity.aws.auth import get_session
 from infinity.aws.instance import get_specific_instance
+from infinity.command.list import print_machine_info
 
 
 @click.command()
-@click.argument('id', nargs=1)
+@click.argument('id')
 def stop(id):
     """
     Stop the cloud machine with the id
@@ -28,3 +29,5 @@ def stop(id):
         print("Machine is stopped")
     else:
         raise Exception(f"Error stopping the instance: {id}")
+
+    print_machine_info(instance)

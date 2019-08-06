@@ -16,15 +16,11 @@ def get_name_from_tags(tags):
         return None
 
 
-@click.command()
-def list():
+def print_machine_info(instances):
     """
-    List all the infinity machines
+    Print a table with the machine infor
     """
-    session = get_session()
-    ec2_resource = session.resource('ec2')
-    instances = get_infinity_instances(session=session)
-
+    ec2_resource = get_session().resource('ec2')
     machine_info = []
     for instance in instances:
         root_volume_id = instance.block_device_mappings[0]['Ebs']['VolumeId']
@@ -37,3 +33,12 @@ def list():
 
     headers = ["ID", "NAME", "MACHINE TYPE", "DISK", "STATUS"]
     print(tabulate(machine_info, headers=headers))
+
+
+@click.command()
+def list():
+    """
+    List all the infinity machines
+    """
+    instances = get_infinity_instances(session=get_session())
+    print_machine_info(instances)

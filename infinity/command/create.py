@@ -4,6 +4,7 @@ from time import sleep
 import click
 
 from infinity.aws.auth import get_session
+from infinity.command.list import print_machine_info
 
 
 @click.command()
@@ -82,4 +83,4 @@ def create():
         print(f"Instance id: {ec2_instance.id}, state: {ec2_instance.state}")
         ec2_instance.reload()
 
-    print(f"Instance id: {ec2_instance.id}, state: {ec2_instance.state}")
+    print_machine_info(ec2_instance)
