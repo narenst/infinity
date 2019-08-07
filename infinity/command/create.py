@@ -5,6 +5,7 @@ import click
 
 from infinity.aws.auth import get_session
 from infinity.command.list import print_machine_info
+from infinity.settings import get_infinity_settings
 
 
 @click.command()
@@ -14,13 +15,14 @@ def create():
     """
     session = get_session()
     client = session.client('ec2')
+    infinity_settings = get_infinity_settings()
 
     # Spot instance request parameters
     machine_name_suffix = ''.join(random.choice(string.ascii_lowercase) for x in range(10))
     response = client.run_instances(
         ImageId='ami-0944c173745e93dff',
         InstanceType='p2.xlarge',
-        KeyName='InfinitySSH',
+        KeyName=infinity_settings.get('aws_key_name'),
         BlockDeviceMappings=[
             {
                 'DeviceName': '/dev/sda1',
@@ -31,9 +33,9 @@ def create():
         ],
         EbsOptimized=True,
         SecurityGroupIds=[
-            'sg-0622d284acc710315',
+            infinity_settings.get('aws_security_group_id'),
         ],
-        SubnetId='subnet-0e211e29f1be70b27',
+        SubnetId=infinity_settings.get('aws_subnet_id'),
         MaxCount=1,
         MinCount=1,
         TagSpecifications=[

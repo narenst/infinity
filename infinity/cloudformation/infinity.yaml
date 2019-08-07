@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  InfinityVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: InfinityVPC
+        - Key: type
+          Value: infinity
+  InfinityInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: InfinityInternetGateway
+        - Key: type
+          Value: infinity
+  InfinityVPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref InfinityInternetGateway
+      VpcId: !Ref InfinityVPC
+  InfinityRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref InfinityVPC
+      Tags:
+        - Key: Name
+          Value: InfinityRouteTable
+        - Key: type
+          Value: infinity
+  InfinityRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref InfinityRouteTable
+      GatewayId: !Ref InfinityInternetGateway
+      DestinationCidrBlock: 0.0.0.0/0
+    DependsOn: InfinityVPCGatewayAttachment
+  InfinitySubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select 
+        - 0
+        - 'Fn::GetAZs': !Ref 'AWS::Region'
+      CidrBlock: 10.0.0.0/16
+      VpcId: !Ref InfinityVPC
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: InfinitySubnet
+        - Key: type
+          Value: infinity
+  InfinitySubnetRouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref InfinitySubnet
+      RouteTableId: !Ref InfinityRouteTable
+  InfinitySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref InfinityVPC
+      GroupName: InfinitySecurityGroup
+      GroupDescription: 'SSH traffic in, all traffic out.'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: type
+          Value: infinity
+        - Key: Name
+          Value: InfinitySecurityGroup
+Outputs:
+  InfinityVPCID:
+    Description: VPC Identifier
+    Value: !Ref InfinityVPC
+  InfinitySubnetID:
+    Description: Subnet Identifier
+    Value: !Ref InfinitySubnet
+  InfinitySecurityGroupID:
+    Description: Security Group Identifier
+    Value: !Ref InfinitySecurityGroup

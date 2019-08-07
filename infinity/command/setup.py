@@ -2,6 +2,8 @@ import click
 import boto3
 from botocore.exceptions import ClientError
 
+from infinity.settings import get_infinity_settings, update_infinity_settings, CONFIG_FILE_PATH
+
 
 @click.command()
 @click.argument('region-name')
@@ -19,19 +21,21 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key):
     session = boto3.Session(region_name=region_name,
                             profile_name=aws_profile)
     cf_client = session.client('cloudformation')
+    stack_name = get_infinity_settings().get('aws_stack_name')
+    key_name = get_infinity_settings().get('aws_key_name')
 
     # Check if infinity stack already exists
     try:
-        stacks = cf_client.describe_stacks(StackName='InfinityStack')
+        stacks = cf_client.describe_stacks(StackName=stack_name)
         if stacks:
             print("Infinity stack already exists")
     except ClientError:
         # Error expected if Stack does not exist
-
         # Create a new stack
+        print(f"Setting up a new Infinity stack in {region_name}")
         with open(cloud_formation_file, 'r') as cf_template:
             _ = cf_client.create_stack(
-                StackName='InfinityStack',
+                StackName=stack_name,
                 TemplateBody=cf_template.read(),
                 Tags=[
                     {
@@ -43,23 +47,39 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key):
 
         # Wait for the stack to be created
         waiter = cf_client.get_waiter('stack_create_complete')
-        waiter.wait(StackName='InfinityStack')
+        waiter.wait(StackName=stack_name)
 
         print("Infinity stack created successfully")
+
+        # Get the configuration from the new stack
+        stacks_response = cf_client.describe_stacks(StackName=stack_name)['Stacks'][0]
+        output_map = {item['OutputKey']: item['OutputValue'] for item in stacks_response['Outputs']}
+
+        settings_update = {
+            "aws_region_name": region_name,
+            "aws_profile_name": aws_profile,
+            "aws_subnet_id": output_map['InfinitySubnetID'],
+            "aws_security_group_id": output_map['InfinitySecurityGroupID'],
+        }
+
+        update_infinity_settings(settings_update)
+        print(f"Infinity config file is updated with the new stack info: {CONFIG_FILE_PATH}")
+
 
     # Create Key Pair
     ec2_client = session.client('ec2')
     try:
         ec2_client.describe_key_pairs(
             KeyNames=[
-                'InfinitySSH'
+                key_name
             ]
         )
+        print("SSH Public key already exists")
     except ClientError:
         # SSH Key not found, so upload
         print("Uploading Public SSH Key")
         ec2_client.import_key_pair(
-            KeyName='InfinitySSH',
+            KeyName=key_name,
             PublicKeyMaterial=ssh_public_key.read()
         )
         print("SSH Public Key uploaded")

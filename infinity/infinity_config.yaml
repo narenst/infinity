@@ -1,0 +1,12 @@
+##########################################################
+# Settings for Infinity Client
+# These values are set by running "infinity setup" command
+# Overwrite them if you already have an AWS setup
+##########################################################
+
+aws_region_name: us-east-2
+aws_profile_name: floyd-dev
+aws_key_name: InfinitySSH
+aws_stack_name: InfinityStack
+aws_security_group_id: None
+aws_subnet_id: None
