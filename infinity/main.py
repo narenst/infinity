@@ -6,6 +6,9 @@ from infinity.command.stop import stop
 from infinity.command.create import create
 from infinity.command.update import update
 from infinity.command.destroy import destroy
+from infinity.command.setup import setup
+from infinity.command.teardown import teardown
+
 
 # import ptvsd
 # print("Waiting for debugger attach")
@@ -25,3 +28,5 @@ cli.add_command(stop)
 cli.add_command(create)
 cli.add_command(update)
 cli.add_command(destroy)
+cli.add_command(setup)
+cli.add_command(teardown)
