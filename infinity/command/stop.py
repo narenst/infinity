@@ -30,4 +30,4 @@ def stop(id):
     else:
         raise Exception(f"Error stopping the instance: {id}")
 
-    print_machine_info(instance)
+    print_machine_info([instance])

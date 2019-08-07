@@ -32,13 +32,16 @@ def update(id, size, instance_type, name):
 
     if size:
         print(f"Updating disk size to: {size}...")
-        root_volume_id = instance.block_device_mappings[0]['Ebs']['VolumeId']
-        response = ec2_client.modify_volume(
-            VolumeId=root_volume_id,
-            Size=size
-        )
-        status = response['VolumeModification']['ModificationState']
-        print(f"Disk is currently in {status} state. It may take a few minutes for the size change to finish")
+        if instance.block_device_mappings:
+            root_volume_id = instance.block_device_mappings[0]['Ebs']['VolumeId']
+            response = ec2_client.modify_volume(
+                VolumeId=root_volume_id,
+                Size=size
+            )
+            status = response['VolumeModification']['ModificationState']
+            print(f"Disk is currently in {status} state. It may take a few minutes for the size change to finish")
+        else:
+            print("No disk attached to this instance")
 
     if instance_type:
         print(f"Updating instance type to: {instance_type}...")

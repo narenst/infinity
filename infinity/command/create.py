@@ -83,4 +83,4 @@ def create():
         print(f"Instance id: {ec2_instance.id}, state: {ec2_instance.state}")
         ec2_instance.reload()
 
-    print_machine_info(ec2_instance)
+    print_machine_info([ec2_instance])

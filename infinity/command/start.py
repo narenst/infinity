@@ -30,4 +30,4 @@ def start(id):
     else:
         raise Exception(f"Error starting the instance: {id}")
 
-    print_machine_info(instance)
+    print_machine_info([instance])
