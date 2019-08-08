@@ -8,6 +8,8 @@ from infinity.command.update import update
 from infinity.command.destroy import destroy
 from infinity.command.setup import setup
 from infinity.command.teardown import teardown
+from infinity.command.ssh import ssh
+from infinity.command.jupyter import jupyter
 
 
 # import ptvsd
@@ -30,3 +32,5 @@ cli.add_command(update)
 cli.add_command(destroy)
 cli.add_command(setup)
 cli.add_command(teardown)
+cli.add_command(ssh)
+cli.add_command(jupyter)

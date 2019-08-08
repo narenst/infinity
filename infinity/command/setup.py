@@ -11,10 +11,15 @@ from infinity.settings import get_infinity_settings, update_infinity_settings, C
 @click.option('--cloud-formation-file',
               required=True,
               type=click.Path(exists=True, readable=True, resolve_path=True))
-@click.option('--ssh-public-key',
+@click.option('--ssh-public-key-path',
+              'ssh_public_key',
               required=True,
-              type=click.File(mode='r'))
-def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key):
+              type=click.File(mode='r'),
+              help="Path to the SSH public key, will be uploaded to AWS")
+@click.option('--ssh-private-key-path',
+              required=True,
+              type=click.Path(exists=True, resolve_path=True))
+def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_private_key_path):
     """
     Sets up the required AWS components for running infinity
     """
@@ -60,11 +65,11 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key):
             "aws_profile_name": aws_profile,
             "aws_subnet_id": output_map['InfinitySubnetID'],
             "aws_security_group_id": output_map['InfinitySecurityGroupID'],
+            "ssh_private_key_path": ssh_private_key_path,
         }
 
         update_infinity_settings(settings_update)
         print(f"Infinity config file is updated with the new stack info: {CONFIG_FILE_PATH}")
-
 
     # Create Key Pair
     ec2_client = session.client('ec2')
