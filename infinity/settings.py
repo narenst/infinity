@@ -2,7 +2,7 @@ import yaml
 import os
 
 
-CONFIG_FILE_PATH = os.path.expanduser('~/.infinity/infinity_config.yaml')
+CONFIG_FILE_PATH = os.path.expanduser('~/.infinity/settings.yaml')
 DEFAULT_CONFIG = {
     "aws_region_name": "us-west-2",
     "aws_profile_name": "default",
