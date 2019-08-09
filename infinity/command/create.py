@@ -2,10 +2,39 @@ import random
 import string
 from time import sleep
 import click
+from dateutil.parser import parse
 
 from infinity.aws.auth import get_session
 from infinity.command.list import print_machine_info
-from infinity.settings import get_infinity_settings
+from infinity.settings import get_infinity_settings, CONFIG_FILE_PATH
+
+
+def get_latest_deep_learning_ami():
+    image_description = "Deep Learning AMI (Ubuntu) Version*"
+    client = get_session().client('ec2')
+    response = client.describe_images(
+        Filters=[
+            {
+                'Name': 'name',
+                'Values': [
+                    image_description
+                ]
+            },
+            {
+                'Name': 'owner-alias',
+                'Values': [
+                    'amazon'
+                ]
+            }
+        ]
+    )
+    images = response['Images']
+    images_created_map = {}
+    for image in images:
+        images_created_map[image['ImageId']] = parse(image['CreationDate'])
+
+    latest_ami = max(images_created_map.items(), key=lambda x: x[1])[0]
+    return latest_ami
 
 
 @click.command()
@@ -19,9 +48,22 @@ def create():
 
     # Spot instance request parameters
     machine_name_suffix = ''.join(random.choice(string.ascii_lowercase) for x in range(10))
+
+    # Pick the machine image
+    ami = infinity_settings['aws_ami']
+    if not ami:
+        print("No ami specified in the configuration. Finding the latest Deep learning ami ")
+        ami = get_latest_deep_learning_ami()
+
+    if not ami:
+        print(f"No AMI found, please specify the ami to use in the infinity config file: {CONFIG_FILE_PATH}")
+        exit(1)
+
+    instance_type = infinity_settings['default_aws_instance_type'] or 'p2.xlarge'
+
     response = client.run_instances(
-        ImageId='ami-0944c173745e93dff',
-        InstanceType='p2.xlarge',
+        ImageId=ami,
+        InstanceType=instance_type,
         KeyName=infinity_settings.get('aws_key_name'),
         BlockDeviceMappings=[
             {

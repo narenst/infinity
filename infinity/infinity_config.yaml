@@ -11,3 +11,5 @@ aws_stack_name: InfinityStack
 aws_security_group_id: None
 aws_subnet_id: None
 ssh_private_key_path: None
+aws_ami: None
+default_aws_instance_type: p2.xlarge
