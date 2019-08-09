@@ -1,57 +1,64 @@
 import click
 
 from infinity.aws.auth import get_session
+from infinity.settings import get_infinity_settings
 
 
 def get_value_for_quota_name(quotas, quota_name):
     for quota in quotas:
         if quota['QuotaName'] == quota_name:
-            return quota['Value']
-    return None
+            return quota['Value'], quota['QuotaCode']
+    return None, None
 
 
 @click.command()
 @click.option('--instance-type', required=True, type=str)
-def quota(instance_type):
+@click.option('--increase-to', type=int)
+def quota(instance_type, increase_to):
     """
     Show the quota limit
     """
     quota_client = get_session().client('service-quotas')
-    quota_paginator_client = quota_client.get_paginator('list_aws_default_service_quotas')
+    quota_paginator_client = quota_client.get_paginator('list_service_quotas')
 
     quota_name = f"Running On-Demand {instance_type} instances"
-    next_token = None
-    quota_value = None
+    response = quota_paginator_client.paginate(
+        ServiceCode='ec2',
+    )
 
-    pagination_config = {
-        'MaxItems': 100,
-    }
+    for quota_set in response:
+        quota_value, quota_code = get_value_for_quota_name(quota_set['Quotas'], quota_name)
+        if quota_value is not None:
+            quota_value = int(quota_value)
+            break
 
-    while True:
-        # response = quota_client.list_service_quotas(
-        #     ServiceCode='ec2',
-        #     MaxResults=100,
-        #     NextToken=next_token,
-        # )
+    aws_region = get_infinity_settings()['aws_region_name']
+    if quota_value is None:
+        print("Cannot find quota for this instance type. Double check if the type value is accurate")
+        exit(1)
 
-        if next_token:
-            pagination_config['StartingToken'] = next_token
+    print(f"Your quota limit for {instance_type} in the {aws_region} region is: {quota_value}")
 
-        response = quota_paginator_client.paginate(
+    # Get any pending increase request for this instance type:
+    response = quota_client.list_requested_service_quota_change_history_by_quota(
+        ServiceCode='ec2',
+        QuotaCode=quota_code,
+    )
+    for request in response['RequestedQuotas']:
+        if request['Status'] in ['PENDING', 'CASE_OPENED']:
+            print(f"You have a pending quota request increase to limit: {request['DesiredValue']}")
+            # Exit if there is an open or pending request, cannot request another one
+            exit(0)
+
+    # Process quota increase now
+    if increase_to:
+        if increase_to <= quota_value:
+            print(f"New quota limit {increase_to} is less than or equal to current limit: {quota_value}")
+            exit(1)
+
+        quota_client.request_service_quota_increase(
             ServiceCode='ec2',
+            QuotaCode=quota_code,
+            DesiredValue=float(increase_to)
         )
-
-        quotas = response
-        quota_value = get_value_for_quota_name(quotas, quota_name)
-        next_token = response['NextToken']
-        print(quota_value, next_token)
-
-        # Quota value is found
-        if quota_value:
-            break
-
-        # Quota pagination is done
-        if not next_token:
-            break
-
-    print(quota_value)
+        print(f"Submitted a quota increase request for {instance_type} in the {aws_region} region to: {increase_to}")
