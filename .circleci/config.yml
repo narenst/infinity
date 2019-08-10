@@ -1,0 +1,18 @@
+# CircleCI Configuration file
+
+version: 2
+jobs:
+    build:
+        docker:
+            - image: python:3.6.2
+        steps:
+            - checkout
+            - run:
+                name: Build
+                command: |
+                    python setup.py sdist
+workflows:
+    version: 2
+    build:
+        jobs:
+            - build

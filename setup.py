@@ -3,7 +3,12 @@ from setuptools import setup, find_packages
 setup(
     name="infinity",
     version="0.1",
+    author="Naren Thiagarajan",
+    author_email="narenst@gmail.com",
+    url="https://www.floydhub.com",
     packages=find_packages(),
+    include_package_data=True,
+    zip_safe=False,
     install_requires=[
         "click",
         "requests",
