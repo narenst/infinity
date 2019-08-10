@@ -1,15 +1,17 @@
 import click
 import boto3
 from botocore.exceptions import ClientError
+import os
+from shutil import copyfile
 
-from infinity.settings import get_infinity_settings, update_infinity_settings, CONFIG_FILE_PATH
+from infinity.settings import (get_infinity_settings, update_infinity_settings, 
+                               CONFIG_FILE_PATH, CLOUD_FORMATION_FILE_PATH)
 
 
 @click.command()
-@click.argument('region-name')
-@click.option('--aws-profile', default=None)
+@click.argument('region-name', required=True)
+@click.option('--aws-profile', default='default')
 @click.option('--cloud-formation-file',
-              required=True,
               type=click.Path(exists=True, readable=True, resolve_path=True))
 @click.option('--ssh-public-key-path',
               'ssh_public_key',
@@ -38,6 +40,13 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
         # Error expected if Stack does not exist
         # Create a new stack
         print(f"Setting up a new Infinity stack in {region_name}")
+        if not cloud_formation_file:
+            print(f"Using default AWS cloudformation from: {CLOUD_FORMATION_FILE_PATH}")
+            if not os.exists(CLOUD_FORMATION_FILE_PATH):
+                copyfile(os.path.join(os.path.dirname(__file__), 'infinity_cloudformation.yaml'), 
+                         CLOUD_FORMATION_FILE_PATH)
+            cloud_formation_file = CLOUD_FORMATION_FILE_PATH
+
         with open(cloud_formation_file, 'r') as cf_template:
             _ = cf_client.create_stack(
                 StackName=stack_name,

@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 
+
 setup(
     name="infinity",
     version="0.1",
@@ -7,6 +8,10 @@ setup(
     author_email="narenst@gmail.com",
     url="https://www.floydhub.com",
     packages=find_packages(),
+    data_files=[
+        ('infinity/command', ['infinity/command/infinity_cloudformation.yaml']),
+        ('infinity', ['infinity/settings.yaml'])
+    ],
     include_package_data=True,
     zip_safe=False,
     install_requires=[
