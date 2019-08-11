@@ -8,8 +8,8 @@ aws_region_name: us-east-2
 aws_profile_name: floyd-dev
 aws_key_name: InfinitySSH
 aws_stack_name: InfinityStack
-aws_security_group_id: None
-aws_subnet_id: None
-ssh_private_key_path: None
-aws_ami: None
+aws_security_group_id: null
+aws_subnet_id: null
+ssh_private_key_path: null
+aws_ami: null
 default_aws_instance_type: p2.xlarge

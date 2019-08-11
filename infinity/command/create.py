@@ -59,6 +59,7 @@ def create():
         print(f"No AMI found, please specify the ami to use in the infinity config file: {CONFIG_FILE_PATH}")
         exit(1)
 
+    print(f"Using ami: {ami}")
     instance_type = infinity_settings['default_aws_instance_type'] or 'p2.xlarge'
 
     response = client.run_instances(
