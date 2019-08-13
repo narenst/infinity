@@ -6,7 +6,7 @@ setup(
     version="0.1",
     author="Naren Thiagarajan",
     author_email="narenst@gmail.com",
-    url="https://www.floydhub.com",
+    url="http://narenst.github.io/",
     packages=find_packages(),
     data_files=[
         ('infinity/command', ['infinity/command/infinity_cloudformation.yaml']),

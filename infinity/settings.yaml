@@ -5,7 +5,7 @@
 ##########################################################
 
 aws_region_name: us-east-2
-aws_profile_name: floyd-dev
+aws_profile_name: default
 aws_key_name: InfinitySSH
 aws_stack_name: InfinityStack
 aws_security_group_id: null
