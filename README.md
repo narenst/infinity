@@ -6,7 +6,7 @@ Machine Learning dev boxes in the cloud. Infinite power on-demand.
 
 Video showing how to use Infinity:
 
-[![Demo](http://https://img.youtube.com/vi/lXEeteH3-So/0.jpg)](https://www.youtube.com/embed/lXEeteH3-So "Infinity Demo")
+[![Demo](https://img.youtube.com/vi/lXEeteH3-So/0.jpg)](https://www.youtube.com/watch?v=lXEeteH3-So "Infinity Demo")
 
 # Installation and Setup
 
