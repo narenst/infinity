@@ -20,8 +20,9 @@ You need an AWS account to use Infinity. The tool will setup AWS EC2 machines as
 
 With you AWS account, you need to create an IAM account and security credentials. You can learn how to do this [here](https://aws.amazon.com/premiumsupport/knowledge-center/create-access-key/). Make sure the user has the following policies (permissions):
 
-    AWSCloudFormationFullAccess
     AmazonEC2FullAccess
+    AWSCloudFormationFullAccess
+    ServiceQuotasFullAccess
 
 Then save the new user's Access Key ID and Secret Access Key in a newly created credentials file at `~/.aws/credentials`. The format of the file is below:
 
