@@ -12,7 +12,7 @@ Video showing how to use Infinity:
 
 Infinity is fully a command line tool. To install infinity from GitHub master branch:
 
-    pip install git+https://github.com/narenst/infinity.git@v0.1#egg=infinity
+    pip install git+https://github.com/narenst/infinity.git@v0.2#egg=infinity
 
 _Note: Infinity requires Python3._
 
