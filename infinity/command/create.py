@@ -130,3 +130,6 @@ def create():
         ec2_instance.reload()
 
     print_machine_info([ec2_instance])
+
+    print("\nHow was your experience setting up your machine? "
+          "Anything we should improve?: https://github.com/narenst/infinity/issues/new")

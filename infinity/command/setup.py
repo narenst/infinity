@@ -97,3 +97,6 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
             PublicKeyMaterial=ssh_public_key.read()
         )
         print("SSH Public Key uploaded")
+
+    print("\nHow was your setup experience? "
+          "Please share your feedback here: https://github.com/narenst/infinity/issues/new")
