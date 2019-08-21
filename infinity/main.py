@@ -11,6 +11,7 @@ from infinity.command.teardown import teardown
 from infinity.command.ssh import ssh
 from infinity.command.jupyter import jupyter
 from infinity.command.quota import quota
+from infinity.command.price import price
 
 
 # import ptvsd
@@ -36,3 +37,4 @@ cli.add_command(teardown)
 cli.add_command(ssh)
 cli.add_command(jupyter)
 cli.add_command(quota)
+cli.add_command(price)
