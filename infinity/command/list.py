@@ -33,11 +33,12 @@ def print_machine_info(instances):
         machine_info.append([instance.id,
                              get_name_from_tags(instance.tags),
                              instance.instance_type,
+                             instance.instance_lifecycle or 'on-demand',
                              instance.public_ip_address,
                              root_volume_size,
                              instance.state['Name']])
 
-    headers = ["ID", "NAME", "MACHINE TYPE", "IP", "DISK", "STATUS"]
+    headers = ["ID", "NAME", "MACHINE TYPE", "TYPE", "IP", "DISK", "STATUS"]
     print(tabulate(machine_info, headers=headers))
 
 

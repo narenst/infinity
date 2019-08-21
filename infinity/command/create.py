@@ -38,7 +38,8 @@ def get_latest_deep_learning_ami():
 
 
 @click.command()
-def create():
+@click.option('--spot/--on-demand', 'is_spot', default=False)
+def create(is_spot):
     """
     Create a new cloud machine with default specs
     """
@@ -62,6 +63,16 @@ def create():
     print(f"Using ami: {ami}")
     instance_type = infinity_settings['default_aws_instance_type'] or 'p2.xlarge'
 
+    if is_spot:
+        instance_market_options = {
+            'MarketType': 'spot',
+            'SpotOptions': {
+                'SpotInstanceType': 'one-time',
+            }
+        }
+    else:
+        instance_market_options = {}
+
     response = client.run_instances(
         ImageId=ami,
         InstanceType=instance_type,
@@ -81,6 +92,7 @@ def create():
         SubnetId=infinity_settings.get('aws_subnet_id'),
         MaxCount=1,
         MinCount=1,
+        InstanceMarketOptions=instance_market_options,
         TagSpecifications=[
             {
                 "ResourceType": "instance",
