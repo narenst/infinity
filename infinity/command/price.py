@@ -58,8 +58,7 @@ def get_on_demand_instance_pricing(instance_type):
 @click.option('--instance-type', required=True, type=str)
 def price(instance_type):
     """
-    Show the price of the instance type across regions
-    Includes both on-demand and spot instances
+    Show the on-demand and spot price of the instance across regions
     """
     client = get_session().client('ec2')
 
