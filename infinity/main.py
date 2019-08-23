@@ -13,11 +13,13 @@ from infinity.command.jupyter import jupyter
 from infinity.command.quota import quota
 from infinity.command.price import price
 
-
-# import ptvsd
-# print("Waiting for debugger attach")
-# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()
+from infinity.command.volume import volume
+from infinity.command.volume.list import list as volume_list # noqa
+from infinity.command.volume.create import create as volume_create # noqa
+from infinity.command.volume.detach import detach as volume_detach # noqa
+from infinity.command.volume.attach import attach as volume_attach # noqa
+from infinity.command.volume.destroy import destroy as volume_destroy # noqa
+from infinity.command.volume.update import update as volume_update # noqa
 
 
 @click.group()
@@ -38,3 +40,4 @@ cli.add_command(ssh)
 cli.add_command(jupyter)
 cli.add_command(quota)
 cli.add_command(price)
+cli.add_command(volume)
