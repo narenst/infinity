@@ -2,6 +2,7 @@ import random
 import string
 from time import sleep
 import click
+import os
 from dateutil.parser import parse
 
 from infinity.aws.auth import get_session
@@ -39,7 +40,8 @@ def get_latest_deep_learning_ami():
 
 @click.command()
 @click.option('--spot/--on-demand', 'is_spot', default=False)
-def create(is_spot):
+@click.option('--attach-volume-id', type=str, help="ID of secondary volume to attach")
+def create(is_spot, attach_volume_id):
     """
     Create a new cloud machine with default specs
     """
@@ -73,6 +75,10 @@ def create(is_spot):
     else:
         instance_market_options = {}
 
+    user_data_file_path = os.path.join(os.path.dirname(__file__), 'user_data.sh')
+    with open(user_data_file_path, 'r') as f:
+        user_data = f.read()
+
     response = client.run_instances(
         ImageId=ami,
         InstanceType=instance_type,
@@ -93,6 +99,7 @@ def create(is_spot):
         MaxCount=1,
         MinCount=1,
         InstanceMarketOptions=instance_market_options,
+        UserData=user_data,
         TagSpecifications=[
             {
                 "ResourceType": "instance",
