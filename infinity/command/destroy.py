@@ -38,5 +38,13 @@ def destroy(id, delete_disk):
             ]
         )
 
+        print("Removing alerts")
+        cloudwatch_client = get_session().client('cloudwatch')
+        cloudwatch_client.delete_alarms(
+            AlarmNames=[
+                f'uptime-alarm-for-{id}'
+            ]
+        )
+
         instance.reload()
         print_machine_info([instance])

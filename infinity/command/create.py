@@ -38,10 +38,87 @@ def get_latest_deep_learning_ami():
     return latest_ami
 
 
+def subscribe_email_to_instance_notifications(session, notification_email):
+    """
+    Create an SNS topic or get the already created topic.
+    Add a new subscription to this topic for the email
+    """
+    sns_client = session.client('sns')
+
+    # Get the topic arn
+    response = sns_client.create_topic(
+        Name='infinity-notifications',
+        Attributes={
+            'DisplayName': 'infinity-notifications',
+        },
+        Tags=[
+            {
+                'Key': 'type',
+                'Value': 'infinity'
+            }
+        ]
+    )
+
+    topic_arn = response['TopicArn']
+
+    # Check if subscription is alredy added to this email
+    # Note: This checks only the first 100 subscriptions
+    # This should be fine since we do not expect so many emails for this
+    response = sns_client.list_subscriptions_by_topic(
+        TopicArn=topic_arn,
+    )
+    existing_subscriptions = response['Subscriptions']
+    for subscription in existing_subscriptions:
+        if subscription['Endpoint'] == notification_email:
+            return topic_arn
+
+    # Create new email subscription
+    response = sns_client.subscribe(
+        TopicArn=topic_arn,
+        Protocol='email',
+        Endpoint=notification_email,
+    )
+
+    return topic_arn
+
+
+def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
+    """
+    Create simple aliveness alert for instance.
+    It should trigger an Alarm with notification to the `infinity-notifications` topic
+    Alarm checks every 15 minutes. And triggers after 12 hours of uptime.
+    """
+    cloudwatch_client = session.client('cloudwatch')
+
+    cloudwatch_client.put_metric_alarm(
+        AlarmName=f'uptime-alarm-for-{instance_id}',
+        AlarmDescription=f'Alert when the instance {instance_id} is running for more than 12 hours',
+        ComparisonOperator='LessThanOrEqualToThreshold',
+        MetricName='CPUUtilization',
+        Namespace='AWS/EC2',
+        EvaluationPeriods=72, #144,
+        Period=300,
+        Statistic='Average',
+        Threshold=100.0,
+        ActionsEnabled=False,
+        TreatMissingData='notBreaching',
+        Dimensions=[
+            {
+                'Name': 'InstanceId',
+                'Value': instance_id
+            },
+        ],
+        AlarmActions=[
+            topic_arn,
+        ]
+    )
+
+
 @click.command()
 @click.option('--spot/--on-demand', 'is_spot', default=False)
 @click.option('--attach-volume-id', type=str, help="ID of secondary volume to attach")
-def create(is_spot, attach_volume_id):
+@click.option('--notification-email', type=str, help="Email address to send notifications to. This is only sent to AWS SNS service")
+def create(is_spot, attach_volume_id, notification_email):
     """
     Create a new cloud machine with default specs
     """
@@ -142,6 +219,15 @@ def create(is_spot, attach_volume_id):
             }
         ]
     )
+
+    # Add email address to SNS Queue and setup alert
+    if notification_email:
+        topic_arn = subscribe_email_to_instance_notifications(session=session,
+                                                              notification_email=notification_email)
+
+        create_cloudwatch_alert_for_instance(session=session,
+                                             instance_id=instance_id,
+                                             topic_arn=topic_arn)
 
     # Wait for the instance to be running again
     while ec2_instance.state == 'pending':
