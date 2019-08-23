@@ -18,7 +18,7 @@ def get_name_from_tags(tags):
 
 def print_machine_info(instances):
     """
-    Print a table with the machine infor
+    Print a table with the machine info
     """
     ec2_resource = get_session().resource('ec2')
     machine_info = []

@@ -22,11 +22,6 @@ def create(instance_id, volume_az, size):
     else:
         raise Exception("Specify one of --az or --reference-instance-id")
 
-    # # Ensure the instance does not already have a secondary disk
-    # for block_device in instance.block_device_mappings:
-    #     if block_device['DeviceName'] == '/dev/sdh':
-    #         raise Exception(f"Instance already has a secondary volume attached to it: {block_device['Ebs']['VolumeId']}")
-
     ec2_client = get_session().client('ec2')
     machine_name_suffix = ''.join(random.choice(string.ascii_lowercase) for x in range(10))
 
@@ -56,15 +51,6 @@ def create(instance_id, volume_az, size):
 
     waiter = ec2_client.get_waiter('volume_available')
     waiter.wait(VolumeIds=[volume_id])
-
-    # response = ec2_client.attach_volume(
-    #     Device='/dev/sdh',
-    #     InstanceId=instance_id,
-    #     VolumeId=volume_id,
-    # )
-
-    # waiter = ec2_client.get_waiter('volume_in_use')
-    # waiter.wait(VolumeIds=[volume_id])
 
     # print(f"Successfully attached the new volume {volume_id} to instance {instance_id}")
     response = ec2_client.describe_volumes(
