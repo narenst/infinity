@@ -7,6 +7,9 @@ from infinity.command.volume.list import print_volume_info
 from infinity.settings import get_infinity_settings
 
 
+SECONDARY_EBS_DEVICE_NAME = '/dev/sdh'
+
+
 @volume.command()
 @click.argument('volume-id')
 @click.option('--instance-id', required=True, type=str, help="ID of instance to attach to")
@@ -25,7 +28,7 @@ def attach(volume_id, instance_id):
 
     # Check if instance already has another secondary disk
     for attachment in instance.block_device_mappings:
-        if attachment['DeviceName'] == '/dev/sdh':
+        if attachment['DeviceName'] == SECONDARY_EBS_DEVICE_NAME:
             raise Exception(f"Instance {instance_id} already has a secondary volume attached to it")
 
     # Check if instance is stopped
@@ -35,7 +38,7 @@ def attach(volume_id, instance_id):
     print("Attaching volume to the instance...")
 
     volume.attach_to_instance(
-        Device='/dev/sdh',
+        Device=SECONDARY_EBS_DEVICE_NAME,
         InstanceId=instance_id,
     )
 

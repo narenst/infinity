@@ -96,11 +96,11 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
         ComparisonOperator='LessThanOrEqualToThreshold',
         MetricName='CPUUtilization',
         Namespace='AWS/EC2',
-        EvaluationPeriods=72, #144,
-        Period=300,
+        EvaluationPeriods=36,  # Check for 3 hours
+        Period=300,  # Check every 5 minutes
         Statistic='Average',
-        Threshold=100.0,
-        ActionsEnabled=False,
+        Threshold=0.5,
+        ActionsEnabled=True,
         TreatMissingData='notBreaching',
         Dimensions=[
             {
