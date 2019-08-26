@@ -33,7 +33,8 @@ def attach(volume_id, instance_id):
 
     # Check if instance is stopped
     if not instance.state['Name'] in ['stopped', 'running']:
-        raise Exception(f"Volume can be mounted only to a stopped or running instance. Current state: {instance.state['Name']}")
+        raise Exception(f"Volume can be mounted only to a stopped or running instance. "
+                        f"Current state: {instance.state['Name']}")
 
     print("Attaching volume to the instance...")
 
@@ -54,7 +55,8 @@ def attach(volume_id, instance_id):
         ssh_private_key_path = get_infinity_settings().get('ssh_private_key_path')
 
         # Ignore the KeyChecking since the hosts are trusted
-        ssh_command = f"ssh -oStrictHostKeyChecking=no -i {ssh_private_key_path} ubuntu@{instance.public_ip_address} sudo /etc/load_volume.sh"
+        ssh_command = f"ssh -oStrictHostKeyChecking=no -i {ssh_private_key_path} " \
+                      f"ubuntu@{instance.public_ip_address} sudo /etc/load_volume.sh"
 
         os.environ["PYTHONUNBUFFERED"] = "1"
         os.system(ssh_command)

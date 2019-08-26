@@ -117,7 +117,9 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
 @click.command()
 @click.option('--spot/--on-demand', 'is_spot', default=False)
 @click.option('--attach-volume-id', type=str, help="ID of secondary volume to attach")
-@click.option('--notification-email', type=str, help="Email address to send notifications to. This is only sent to AWS SNS service")
+@click.option('--notification-email',
+              type=str,
+              help="Email address to send notifications to. This is only sent to AWS SNS service")
 def create(is_spot, attach_volume_id, notification_email):
     """
     Create a new cloud machine with default specs
@@ -221,6 +223,9 @@ def create(is_spot, attach_volume_id, notification_email):
     )
 
     # Add email address to SNS Queue and setup alert
+    if not notification_email:
+        notification_email = get_infinity_settings().get('notification_email')
+
     if notification_email:
         topic_arn = subscribe_email_to_instance_notifications(session=session,
                                                               notification_email=notification_email)
