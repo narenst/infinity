@@ -26,7 +26,7 @@ from infinity.settings import (get_infinity_settings, update_infinity_settings,
               help="Email address to send notifications to. This is only sent to AWS SNS service")
 def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_private_key_path, notification_email):
     """
-    Sets up the required AWS components for running infinity (Run this first time)
+    Sets up infinity before first run.
 
     Before you run Infinity for the first time, you need to run this command. It creates a
     CloudFormation stack. And uploads a SSH key to AWS to connect to the instances

@@ -58,7 +58,11 @@ def get_on_demand_instance_pricing(instance_type):
 @click.option('--instance-type', required=True, type=str)
 def price(instance_type):
     """
-    Show the on-demand and spot price of the instance across regions
+    View the spot and on-demand prices for the instance across all AWS regions.
+
+    This command queries the spot instance price for every region that offers the instance.
+    It also gets the probability that the machine will be preempted. For completeness, it also
+    shows the on-demand price for comparison.
     """
     client = get_session().client('ec2')
 

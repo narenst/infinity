@@ -16,7 +16,11 @@ def get_value_for_quota_name(quotas, quota_name):
 @click.option('--increase-to', type=int)
 def quota(instance_type, increase_to):
     """
-    Show the quota limit
+    View and increase quota limit for your account.
+
+    This command shows the current quota limit for the instance type in your account.
+    You will not be able to spin up more than the quota number of instances.
+    To increase the quota limit, you can request AWS with this command as well.
     """
     quota_client = get_session().client('service-quotas')
     quota_paginator_client = quota_client.get_paginator('list_service_quotas')
