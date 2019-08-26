@@ -13,17 +13,35 @@ from infinity.command.jupyter import jupyter
 from infinity.command.quota import quota
 from infinity.command.price import price
 
-from infinity.command.volume import volume
-from infinity.command.volume.list import list as volume_list # noqa
-from infinity.command.volume.create import create as volume_create # noqa
-from infinity.command.volume.detach import detach as volume_detach # noqa
-from infinity.command.volume.attach import attach as volume_attach # noqa
-from infinity.command.volume.destroy import destroy as volume_destroy # noqa
-from infinity.command.volume.update import update as volume_update # noqa
+from infinity.command.volume.list import list as volume_list
+from infinity.command.volume.create import create as volume_create
+from infinity.command.volume.detach import detach as volume_detach
+from infinity.command.volume.attach import attach as volume_attach
+from infinity.command.volume.destroy import destroy as volume_destroy
+from infinity.command.volume.update import update as volume_update
 
 
 @click.group()
 def cli():
+    """
+    Infinity commands to manage AWS machines for ML.
+    """
+    pass
+
+
+@click.group()
+def volume():
+    """
+    Infinity cli specifically to manage EBS disk volumes.
+    """
+    pass
+
+
+@click.group()
+def tools():
+    """
+    Special purpose AWS tools
+    """
     pass
 
 
@@ -38,6 +56,15 @@ cli.add_command(setup)
 cli.add_command(teardown)
 cli.add_command(ssh)
 cli.add_command(jupyter)
-cli.add_command(quota)
-cli.add_command(price)
-cli.add_command(volume)
+
+
+volume.add_command(volume_list)
+volume.add_command(volume_create)
+volume.add_command(volume_attach)
+volume.add_command(volume_detach)
+volume.add_command(volume_destroy)
+volume.add_command(volume_update)
+
+
+tools.add_command(quota)
+tools.add_command(price)
