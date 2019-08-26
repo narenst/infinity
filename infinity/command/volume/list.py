@@ -37,6 +37,12 @@ def print_volume_info(volumes):
 
 @volume.command()
 def list():
+    """
+    Prints a list of all your volumes.
+
+    Useful to see all the volumes in one place. The volumes must have an AWS tag
+    type=infinity for the volume to show up in this list.
+    """
     ec2_client = get_session().client('ec2')
     response = ec2_client.describe_volumes(
         Filters=[

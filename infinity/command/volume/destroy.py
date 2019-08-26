@@ -8,7 +8,10 @@ from infinity.command.volume import volume
 @click.argument('volume-id')
 def destroy(volume_id):
     """
-    Destroy the volume
+    Destroy the volume.
+
+    Can only be run when it is not attached to any instance. The disk is
+    not recoverable after destroying.
     """
     ec2_resource = get_session().resource('ec2')
     volume = ec2_resource.Volume(volume_id)

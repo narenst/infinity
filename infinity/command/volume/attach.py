@@ -15,7 +15,10 @@ SECONDARY_EBS_DEVICE_NAME = '/dev/sdh'
 @click.option('--instance-id', required=True, type=str, help="ID of instance to attach to")
 def attach(volume_id, instance_id):
     """
-    Attach the volume to the instance
+    Attach the volume as a secondary disk to an instance.
+
+    This command works only when the instance is running or in stopped state. Ensure that the
+    instance does not already have a secondary disk volume attached.
     """
     ec2_resource = get_session().resource('ec2')
 

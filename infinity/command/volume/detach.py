@@ -9,7 +9,9 @@ from infinity.command.volume.list import print_volume_info
 @click.argument('volume-id')
 def detach(volume_id):
     """
-    Detach the volume from the instance
+    Detach the volume from its instance.
+
+    The detached volume can then be attached to any other instance.
     """
     ec2_resource = get_session().resource('ec2')
     volume = ec2_resource.Volume(volume_id)

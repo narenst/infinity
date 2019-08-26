@@ -10,7 +10,9 @@ from infinity.command.volume import volume
 @click.option('--name', help='Set the name of the machine')
 def update(volume_id, size, name):
     """
-    Update volume specs
+    Update the name or size of the volume.
+
+    Ensure that you are only increasing the size of the disk.
     """
     ec2_resource = get_session().resource('ec2')
     ec2_client = get_session().client('ec2')

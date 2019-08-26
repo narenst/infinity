@@ -12,6 +12,13 @@ from infinity.command.volume.list import print_volume_info
 @click.option('--az', 'volume_az', type=str, help="Availability zone")
 @click.option('--size', default=100, type=int, help='Disk size in GBs')
 def create(instance_id, volume_az, size):
+    """
+    Create new EBS volume.
+
+    Requires a reference EC2 instance id or Availability Zone info. This volume is persisted even after
+    the EC2 instance is destroyed. Note: AWS will charge you for EBS volumes whether they are attached
+    to an instance or not.
+    """
     ec2_resource = get_session().resource('ec2')
 
     if instance_id:
