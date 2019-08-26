@@ -92,7 +92,8 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
 
     cloudwatch_client.put_metric_alarm(
         AlarmName=f'uptime-alarm-for-{instance_id}',
-        AlarmDescription=f'Alert when the instance {instance_id} is running for more than 12 hours',
+        AlarmDescription=f'Instance {instance_id} is running without any usage for more than 3 hours. '
+                         f'Stop instance if not using it.',
         ComparisonOperator='LessThanOrEqualToThreshold',
         MetricName='CPUUtilization',
         Namespace='AWS/EC2',
@@ -122,7 +123,10 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
               help="Email address to send notifications to. This is only sent to AWS SNS service")
 def create(is_spot, attach_volume_id, notification_email):
     """
-    Create a new cloud machine with default specs
+    Create a new on-demand or spot instance.
+
+    Secondary EBS volume id if specified will also be attached to the machine.
+    Add a notification email address to get notified when the machine unused and running.
     """
     session = get_session()
     client = session.client('ec2')

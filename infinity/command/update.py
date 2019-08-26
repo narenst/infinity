@@ -6,12 +6,15 @@ from infinity.command.list import print_machine_info
 
 @click.command()
 @click.argument('id')
-@click.option('--size', type=int, help="Increase the disk size (in GBs)")
+@click.option('--size', type=int, help="Increase the root disk size (in GBs)")
 @click.option('--type', 'instance_type', help="Switch the AWS instance type. Ex: p2.xlarge, t3.large")
 @click.option('--name', help='Set the name of the machine')
 def update(id, size, instance_type, name):
     """
-    Update instance specifications
+    Update instance specifications.
+
+    The instance type can be updated only when the instance is running.
+    Other parameters can be updated in a running instance.
     """
     session = get_session()
     ec2_resource = session.resource('ec2')

@@ -10,7 +10,10 @@ from infinity.settings import get_infinity_settings
 @click.option('--print-command-only/--no-print-command-only', default=False)
 def ssh(id, print_command_only):
     """
-    SSH into the infinity machine
+    SSH into the infinity machine.
+
+    This command uses the private key configured in the settings file (~/.infinity/settings.yaml)
+    to connect.
     """
     ec2_resource = get_session().resource('ec2')
     instance = ec2_resource.Instance(id)

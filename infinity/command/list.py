@@ -45,7 +45,10 @@ def print_machine_info(instances):
 @click.command()
 def list():
     """
-    List all the infinity machines
+    List all the infinity instances.
+
+    Useful to see all the instances in one place. The instance must have an AWS tag
+    type=infinity for it to show up in this list.
     """
     instances = get_infinity_instances(session=get_session())
     print_machine_info(instances)
