@@ -117,16 +117,19 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
 
 @click.command()
 @click.option('--spot/--on-demand', 'is_spot', default=False)
-@click.option('--attach-volume-id', type=str, help="ID of secondary volume to attach")
 @click.option('--notification-email',
               type=str,
               help="Email address to send notifications to. This is only sent to AWS SNS service")
-def create(is_spot, attach_volume_id, notification_email):
+@click.option('--instance-type',
+              type=str,
+              help="AWS instance type for the machine",
+              default='None')
+def create(is_spot, notification_email, instance_type):
     """
     Create a new on-demand or spot instance.
 
-    Secondary EBS volume id if specified will also be attached to the machine.
     Add a notification email address to get notified when the machine unused and running.
+    Any secondary EBS Volume can be attached after the machine is up and running.
     """
     session = get_session()
     client = session.client('ec2')
@@ -145,8 +148,8 @@ def create(is_spot, attach_volume_id, notification_email):
         print(f"No AMI found, please specify the ami to use in the infinity config file: {CONFIG_FILE_PATH}")
         exit(1)
 
-    print(f"Using ami: {ami}")
-    instance_type = infinity_settings['default_aws_instance_type'] or 'p2.xlarge'
+    instance_type = instance_type or infinity_settings['default_aws_instance_type'] or 'p2.xlarge'
+    print(f"Using ami: {ami}, instance type: {instance_type}")
 
     if is_spot:
         instance_market_options = {
