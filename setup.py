@@ -29,6 +29,8 @@ setup(
     entry_points={
         "console_scripts": [
             "infinity = infinity.main:cli",
+            "infinity-volume = infinity.main:volume",
+            "infinity-tools = infinity.main:tools",
         ],
     },
     tests_require=[

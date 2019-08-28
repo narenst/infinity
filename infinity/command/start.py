@@ -9,7 +9,7 @@ from infinity.command.list import print_machine_info
 @click.argument('id')
 def start(id):
     """
-    Start the cloud machine with the id
+    Start the cloud instance.
     """
     session = get_session()
     instance = get_specific_instance(session=session, id=id)

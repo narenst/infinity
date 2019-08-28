@@ -9,7 +9,9 @@ from infinity.command.list import print_machine_info
 @click.option('--delete-disk/--no-delete-disk', default=True, help="Skip deleting the root disk")
 def destroy(id, delete_disk):
     """
-    Terminate the cloud machine with the id. This is irrecoverable
+    Terminate and destroy the cloud instance.
+
+    This is irrrecoverable. But you can keep the root disk and attach to another instance later.
     """
     ec2_resource = get_session().resource('ec2')
     instance = ec2_resource.Instance(id)
@@ -35,6 +37,14 @@ def destroy(id, delete_disk):
         ec2_client.terminate_instances(
             InstanceIds=[
                 id,
+            ]
+        )
+
+        print("Removing alerts")
+        cloudwatch_client = get_session().client('cloudwatch')
+        cloudwatch_client.delete_alarms(
+            AlarmNames=[
+                f'uptime-alarm-for-{id}'
             ]
         )
 

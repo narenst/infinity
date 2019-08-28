@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 import os
 from shutil import copyfile
 
-from infinity.settings import (get_infinity_settings, update_infinity_settings, 
+from infinity.settings import (get_infinity_settings, update_infinity_settings,
                                CONFIG_FILE_PATH, CLOUD_FORMATION_FILE_PATH)
 
 
@@ -21,9 +21,16 @@ from infinity.settings import (get_infinity_settings, update_infinity_settings,
 @click.option('--ssh-private-key-path',
               required=True,
               type=click.Path(exists=True, resolve_path=True))
-def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_private_key_path):
+@click.option('--notification-email',
+              type=str,
+              help="Email address to send notifications to. This is only sent to AWS SNS service")
+def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_private_key_path, notification_email):
     """
-    Sets up the required AWS components for running infinity
+    Sets up infinity before first run.
+
+    Before you run Infinity for the first time, you need to run this command. It creates a
+    CloudFormation stack. And uploads a SSH key to AWS to connect to the instances
+    you will create. Infinity config is stored in the config file stored at ~/.infinity/settings.yaml.
     """
     session = boto3.Session(region_name=region_name,
                             profile_name=aws_profile)
@@ -42,7 +49,7 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
         if not cloud_formation_file:
             print(f"Using default AWS cloudformation from: {CLOUD_FORMATION_FILE_PATH}")
             if not os.path.exists(CLOUD_FORMATION_FILE_PATH):
-                copyfile(os.path.join(os.path.dirname(__file__), 'infinity_cloudformation.yaml'), 
+                copyfile(os.path.join(os.path.dirname(__file__), 'infinity_cloudformation.yaml'),
                          CLOUD_FORMATION_FILE_PATH)
             cloud_formation_file = CLOUD_FORMATION_FILE_PATH
 
@@ -74,7 +81,6 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
             "aws_profile_name": aws_profile,
             "aws_subnet_id": output_map['InfinitySubnetID'],
             "aws_security_group_id": output_map['InfinitySecurityGroupID'],
-            "ssh_private_key_path": ssh_private_key_path,
         }
 
         update_infinity_settings(settings_update)
@@ -98,5 +104,28 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
         )
         print("SSH Public Key uploaded")
 
-    print("\nHow was your setup experience? "
-          "Please share your feedback here: https://github.com/narenst/infinity/issues/new")
+        settings_update = {
+            "ssh_private_key_path": ssh_private_key_path,
+        }
+
+        update_infinity_settings(settings_update)
+        print(f"Infinity config file is updated with the new key info: {CONFIG_FILE_PATH}")
+
+    # Set notification email
+    if not notification_email:
+        notification_email = click.prompt(
+            'Please enter an email address to send instance notifications from AWS. Press enter to skip this',
+            type=str,
+            default=None,
+        )
+
+    if notification_email:
+        update_infinity_settings(
+            {
+                "notification_email": notification_email
+            }
+        )
+        print(f"Infinity config file is updated with the notification email: {CONFIG_FILE_PATH}")
+
+    print("\nHow was your setup experience? Please share your feedback here: "
+          "https://github.com/narenst/infinity/issues/new")

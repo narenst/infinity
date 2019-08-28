@@ -18,7 +18,7 @@ def get_name_from_tags(tags):
 
 def print_machine_info(instances):
     """
-    Print a table with the machine infor
+    Print a table with the machine info
     """
     ec2_resource = get_session().resource('ec2')
     machine_info = []
@@ -33,18 +33,22 @@ def print_machine_info(instances):
         machine_info.append([instance.id,
                              get_name_from_tags(instance.tags),
                              instance.instance_type,
+                             instance.instance_lifecycle or 'on-demand',
                              instance.public_ip_address,
                              root_volume_size,
                              instance.state['Name']])
 
-    headers = ["ID", "NAME", "MACHINE TYPE", "IP", "DISK", "STATUS"]
+    headers = ["ID", "NAME", "MACHINE TYPE", "TYPE", "IP", "DISK", "STATUS"]
     print(tabulate(machine_info, headers=headers))
 
 
 @click.command()
 def list():
     """
-    List all the infinity machines
+    List all the infinity instances.
+
+    Useful to see all the instances in one place. The instance must have an AWS tag
+    type=infinity for it to show up in this list.
     """
     instances = get_infinity_instances(session=get_session())
     print_machine_info(instances)

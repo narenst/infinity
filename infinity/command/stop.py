@@ -9,7 +9,7 @@ from infinity.command.list import print_machine_info
 @click.argument('id')
 def stop(id):
     """
-    Stop the cloud machine with the id
+    Stop the cloud instance.
     """
     session = get_session()
     instance = get_specific_instance(session=session, id=id)

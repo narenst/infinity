@@ -12,7 +12,11 @@ from infinity.settings import get_infinity_settings
 @click.option('--infinity-machine-port', type=int, default=8888)
 def jupyter(id, print_command_only, local_port, infinity_machine_port):
     """
-    Setup port forwarding for Jupyter Lab
+    Setup port forwarding for Jupyter Lab.
+
+    This will SSH into the instance and forward the infinity-machine-port to the local machine.
+    Gives a secure option to connect to your Jupyter Lab instance. Note: You need to run Jupyter Lab
+    for this command to work.
     """
     ec2_resource = get_session().resource('ec2')
     instance = ec2_resource.Instance(id)

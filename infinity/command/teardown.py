@@ -8,7 +8,10 @@ from infinity.settings import get_infinity_settings
 @click.command()
 def teardown():
     """
-    Deletes all the AWS components created by Infinity
+    Deletes all the AWS components created by infinity setup.
+
+    This is irrecoverable. It will remove the Cloudformation Stack created
+    by the setup command. This is the reverse of setup command.
     """
     infinity_settings = get_infinity_settings()
 
