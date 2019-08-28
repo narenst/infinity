@@ -4,12 +4,9 @@ Fully managed Spot GPU machines for ML development. Infinite power at minimal co
 
 ## Demos
 
-How to spin up a Spot instance and attach an EBS volume (60 sec video)
+How to spin up a Spot instance and attach an EBS volume (90 sec video)
 
-
-Video showing how to use Infinity on-demand instance:
-
-[![Demo](https://img.youtube.com/vi/lXEeteH3-So/0.jpg)](https://www.youtube.com/watch?v=lXEeteH3-So "Infinity Demo")
+[![Demo](https://img.youtube.com/vi/W3K1U-OZm8s/0.jpg)](https://www.youtube.com/watch?v=W3K1U-OZm8s "Infinity Spot Instance")
 
 # Installation
 
@@ -21,19 +18,19 @@ _Note: Infinity requires Python3_
 
 # How to use
 
-Infinity has 3 cli tools for managing different parts of your workflow.
+Infinity has three cli tools for managing different parts of your workflow.
 
 ## infinity
 
-Use the `infinity` cli tool to create, manage and destroy development machines.
+Use the `infinity` cli tool to create and manage ML development machines.
 
-### Create new ML instance
+### Create new Spot instance
 
-To spin up a new spot machine with a Tesla K-80 GPU in your AWS region:
+To spin up a new spot machine with a *Tesla K-80* GPU in your AWS region:
 
     infinity create --spot
 
-If you would like to change the GPU to a Tesla V-100:
+If you would like to change the GPU to a *Tesla V-100*:
 
     infinity create --spot --instance-type p3.2xlarge
 
@@ -189,7 +186,14 @@ With you AWS account, you need to create an IAM account and security credentials
 
     AmazonEC2FullAccess
     AWSCloudFormationFullAccess
+    AmazonSNSFullAccess
+    CloudWatchFullAccess
+
+To run the `infinity-tools` commands successfully, you also need to add these permissions:
+
     ServiceQuotasFullAccess
+    AWSPriceListServiceFullAccess
+
 
 Then save the new user's Access Key ID and Secret Access Key in a newly created credentials file at `~/.aws/credentials`. The format of the file is below:
 
@@ -208,3 +212,7 @@ To setup infinity in the `us-east-2` region, you need to run:
     infinity setup us-east-2 --ssh-public-key-path ~/.ssh/id_rsa.pub --ssh-private-key-path ~/.ssh/id_rsa
 
 Use the SSH key path you created in the previous step. This will spin up a new CloudFormation stack that setups a secure VPC, Subnet and Security Group. You can view the CloudFormation file in the `~/.infinity` directory. You can also use any other cloud formation file in the setup step here. This newly created network will be used to launch infinity machines.
+
+Video showing how to setup Infinity and manage instances:
+
+[![Demo](https://img.youtube.com/vi/lXEeteH3-So/0.jpg)](https://www.youtube.com/watch?v=lXEeteH3-So "Infinity Demo")
