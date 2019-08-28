@@ -12,7 +12,7 @@ How to spin up a Spot instance and attach an EBS volume (90 sec video)
 
 Infinity is fully a command line tool. To install infinity from GitHub master branch:
 
-    pip install git+https://github.com/narenst/infinity.git@v0.2#egg=infinity
+    pip install git+https://github.com/narenst/infinity.git@v0.3#egg=infinity
 
 _Note: Infinity requires Python3_
 
