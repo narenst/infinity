@@ -122,8 +122,7 @@ def create_cloudwatch_alert_for_instance(session, instance_id, topic_arn):
               help="Email address to send notifications to. This is only sent to AWS SNS service")
 @click.option('--instance-type',
               type=str,
-              help="AWS instance type for the machine",
-              default='None')
+              help="AWS instance type for the machine")
 def create(is_spot, notification_email, instance_type):
     """
     Create a new on-demand or spot instance.
