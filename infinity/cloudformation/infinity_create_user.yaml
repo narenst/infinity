@@ -1,0 +1,70 @@
+# This file should be in sync with 
+# https://infinity-cloudformation-templates.s3-eu-west-1.amazonaws.com/infinity_create_user.yaml
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  InfinityUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+      UserName: infinity-cli
+  InfinityUserPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: "infinity-user-updated"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "ec2:ModifyVolumeAttribute"
+              - "ec2:DescribeInstances"
+              - "cloudwatch:DeleteAlarms"
+              - "ec2:CreateKeyPair"
+              - "ec2:ResetInstanceAttribute"
+              - "servicequotas:RequestServiceQuotaIncrease"
+              - "ec2:DeleteVolume"
+              - "ec2:DescribeVolumeStatus"
+              - "ec2:StartInstances"
+              - "ec2:DescribeVolumes"
+              - "sns:Subscribe"
+              - "ec2:DescribeKeyPairs"
+              - "servicequotas:ListServiceQuotas"
+              - "ec2:DetachVolume"
+              - "sns:ListTagsForResource"
+              - "ec2:ModifyVolume"
+              - "sns:ListSubscriptionsByTopic"
+              - "ec2:ImportKeyPair"
+              - "ec2:CreateTags"
+              - "sns:CreateTopic"
+              - "ec2:RunInstances"
+              - "ec2:StopInstances"
+              - "ec2:DescribeVolumeAttribute"
+              - "ec2:CreateVolume"
+              - "cloudwatch:DescribeAlarms"
+              - "ec2:DeleteKeyPair"
+              - "ec2:AttachVolume"
+              - "sns:TagResource"
+              - "ec2:DeleteTags"
+              - "sns:DeleteTopic"
+              - "ec2:DescribeInstanceAttribute"
+              - "ec2:DescribeRegions"
+              - "sns:ListTopics"
+              - "sns:SetTopicAttributes"
+              - "sns:UntagResource"
+              - "servicequotas:GetServiceQuota"
+              - "ec2:DescribeSpotPriceHistory"
+              - "ec2:DescribeAvailabilityZones"
+              - "cloudwatch:DisableAlarmActions"
+              - "ec2:ModifyInstanceAttribute"
+              - "ec2:RebootInstances"
+              - "ec2:TerminateInstances"
+              - "sns:GetTopicAttributes"
+              - "ec2:DescribeTags"
+              - "sns:ListSubscriptions"
+              - "ec2:DescribeImages"
+              - "cloudwatch:PutMetricAlarm"
+              - "sns:SetSubscriptionAttributes"
+              - "cloudwatch:EnableAlarmActions"
+              - "servicequotas:ListRequestedServiceQuotaChangeHistoryByQuota"
+            Resource: '*'
+      Users:
+        - !Ref InfinityUser

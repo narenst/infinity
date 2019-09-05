@@ -182,20 +182,16 @@ You need an AWS account to use Infinity. The tool will setup AWS EC2 machines as
 
 ## AWS Credentials
 
-With you AWS account, you need to create an IAM account and security credentials. You can learn how to do this [here](https://aws.amazon.com/premiumsupport/knowledge-center/create-access-key/). Make sure the user has the following policies (permissions):
+With you AWS account, you need to create an IAM account and security credentials. You need to set appropriate permissions to this user account. To automate this account creation, follow these steps:
 
-    AmazonEC2FullAccess
-    AWSCloudFormationFullAccess
-    AmazonSNSFullAccess
-    CloudWatchFullAccess
+1. Sign-in to your AWS Account in your browser
+2. Click this link to create a new Infinity user with required permissions: [Create Infinity User](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?templateURL=https://infinity-cloudformation-templates.s3-eu-west-1.amazonaws.com/infinity_create_user.yaml&stackName=InfinityUser)
+3. Make sure to select the button to acknowledge creation of IAM resources and create the stack
+4. Wait for the stack to create (takes a maximum of 10 seconds)
+5. Visit this link: [Create new security credentials](https://console.aws.amazon.com/iam/home#/users/infinity-cli?section=security_credentials)
+6. Click "Create access key" button to create new credentials for the infinity user.
 
-To run the `infinity-tools` commands successfully, you also need to add these permissions:
-
-    ServiceQuotasFullAccess
-    AWSPriceListServiceFullAccess
-
-
-Then save the new user's Access Key ID and Secret Access Key in a newly created credentials file at `~/.aws/credentials`. The format of the file is below:
+Save the new user's Access Key ID and Secret Access Key in a newly created credentials file at `~/.aws/credentials`. The format of the file is below:
 
     [default]
     aws_access_key_id = ********************
