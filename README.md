@@ -216,3 +216,7 @@ Use the SSH key path you created in the previous step. This will spin up a new C
 Video showing how to setup Infinity and manage instances:
 
 [![Demo](https://img.youtube.com/vi/lXEeteH3-So/0.jpg)](https://www.youtube.com/watch?v=lXEeteH3-So "Infinity Demo")
+
+## Analytics
+
+Infinity uses anonymized usage analytics to learn how the tool is used. More info on this is available in the [analytics page](./analytics/README.md)
