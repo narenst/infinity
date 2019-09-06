@@ -1,0 +1,3 @@
+## Infinity's Anonymous User Behaviour Analytics
+
+Infinity is gathering anonymous user behaviour analytics and reporting these to Amplitude. Infinity is a free-to-use open source project. The analytics info is useful to identify issues and to decide on how best to design future features and prioritise current work. Anonymous user analytics allow us to prioritise fixes and features based on how, where and when people use Infinity.

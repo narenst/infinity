@@ -1,4 +1,5 @@
 import click
+import sentry_sdk
 
 from infinity.command.list import list
 from infinity.command.start import start
@@ -20,29 +21,39 @@ from infinity.command.volume.attach import attach as volume_attach
 from infinity.command.volume.destroy import destroy as volume_destroy
 from infinity.command.volume.update import update as volume_update
 
+from infinity.analytics import get_analytics_client, initialize_raven_client
+
+
+def send_analytics(event_name):
+    initialize_raven_client()
+    get_analytics_client().track_event(event_name=event_name)
+
 
 @click.group()
-def cli():
+@click.pass_context
+def cli(ctx):
     """
     Infinity commands to manage AWS machines for ML.
     """
-    pass
+    send_analytics(f"infinity-{ctx.invoked_subcommand}")
 
 
 @click.group()
-def volume():
+@click.pass_context
+def volume(ctx):
     """
     Infinity cli specifically to manage EBS disk volumes.
     """
-    pass
+    send_analytics(f"infinity-volume-{ctx.invoked_subcommand}")
 
 
 @click.group()
+@click.pass_context
 def tools():
     """
     Special purpose AWS tools
     """
-    pass
+    send_analytics(f"infinity-tools-{ctx.invoked_subcommand}")
 
 
 # Mount the individual commands here

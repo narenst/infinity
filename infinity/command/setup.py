@@ -6,6 +6,7 @@ from shutil import copyfile
 
 from infinity.settings import (get_infinity_settings, update_infinity_settings,
                                CONFIG_FILE_PATH, CLOUD_FORMATION_FILE_PATH)
+from infinity.analytics import get_analytics_client
 
 
 @click.command()
@@ -129,3 +130,6 @@ def setup(region_name, aws_profile, cloud_formation_file, ssh_public_key, ssh_pr
 
     print("\nHow was your setup experience? Please share your feedback here: "
           "https://github.com/narenst/infinity/issues/new")
+
+    # Register user to Analytics
+    get_analytics_client().register_user()
