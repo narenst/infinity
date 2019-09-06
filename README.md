@@ -219,4 +219,4 @@ Video showing how to setup Infinity and manage instances:
 
 ## Analytics
 
-Infinity uses anonymized usage analytics to learn how the tool is used. More info on this is available in the [analytics page](./infinity/analytics/README.md)
+Infinity uses anonymized usage analytics to learn how the tool is used. More info on this is available in the [analytics page](./infinity/analytics)
