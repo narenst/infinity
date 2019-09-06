@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="infinity",
-    version="0.3",
+    version="0.3.1",
     author="Naren Thiagarajan",
     author_email="narenst@gmail.com",
     url="http://narenst.github.io/",
