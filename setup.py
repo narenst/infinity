@@ -20,7 +20,8 @@ setup(
         "pytz",
         "tabulate",
         "PyYAML",
-        "boto3>=1.0.0"
+        "boto3>=1.0.0",
+        "sentry-sdk==0.11.2"
     ],
     setup_requires=[
         "flake8",
