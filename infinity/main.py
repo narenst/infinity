@@ -20,29 +20,37 @@ from infinity.command.volume.attach import attach as volume_attach
 from infinity.command.volume.destroy import destroy as volume_destroy
 from infinity.command.volume.update import update as volume_update
 
+from infinity.analytics import get_analytics_client
+
 
 @click.group()
-def cli():
+@click.pass_context
+def cli(ctx):
     """
     Infinity commands to manage AWS machines for ML.
     """
-    pass
+    event_name = f"infinity-{ctx.invoked_subcommand}"
+    get_analytics_client().track_event(event_name=event_name)
 
 
 @click.group()
-def volume():
+@click.pass_context
+def volume(ctx):
     """
     Infinity cli specifically to manage EBS disk volumes.
     """
-    pass
+    event_name = f"infinity-volume-{ctx.invoked_subcommand}"
+    get_analytics_client().track_event(event_name=event_name)
 
 
 @click.group()
+@click.pass_context
 def tools():
     """
     Special purpose AWS tools
     """
-    pass
+    event_name = f"infinity-tools-{ctx.invoked_subcommand}"
+    get_analytics_client().track_event(event_name=event_name)
 
 
 # Mount the individual commands here
