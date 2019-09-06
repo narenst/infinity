@@ -21,4 +21,8 @@ def get_analytics_client():
 def initialize_raven_client():
     debug_mode = get_infinity_settings().get('infinity_debug_mode')
     if not debug_mode:
-        initialize_sentry()
+        # TODO: Sentry prints verbose message on all exceptions
+        # Infinity throws valid exceptions from boto. So this is distracting
+
+        # initialize_sentry()
+        pass
