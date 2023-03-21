@@ -21,7 +21,7 @@ setup(
         "tabulate",
         "PyYAML",
         "boto3>=1.0.0",
-        "sentry-sdk==0.11.2"
+        "sentry-sdk==1.14.0"
     ],
     setup_requires=[
         "flake8",
